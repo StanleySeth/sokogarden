@@ -1,3 +1,10 @@
+#Flask is a lightweight web framework used to build web applications and APIs using Python.
+#It allows us to:
+                 #Create web routes
+                 #Handle HTTP requests (GET, POST)
+                 #Send responses (JSON, HTML, etc.)
+
+                 #Work with forms and APIs
 #Import flask and its components
 
 from flask import *
@@ -11,8 +18,9 @@ app = Flask(__name__)
 #Below is a sign up route
 @app.route("/api/signup", methods = ["POST"])
 def signup():
+    #This function is executed wheneever a POST request is sent to /api/signup.
     if request.method == "POST":
-        #Extract the ddifferent details entered on the form
+        #Extract the different details entered on the form
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
@@ -24,6 +32,7 @@ def signup():
         connection = pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
 
         #Create a cursor to execute the sql queries
+        #Cursor -> An object used to execute SQL queries
         cursor = connection.cursor()
 
         #Structure an sql to insert the details received from the form
@@ -46,11 +55,44 @@ def signup():
 
 
 
+#Below is the login/sign in Route
+@app.route("/api/signin", methods =["POST"])
+def signin():
+    if request.method == "POST":
+        #Extract the two details entered on the form
+        email = request.form["email"]
+        password = request.form["password"]
+     #print the two details entered on the form
+     #print(email, password)
+     #Create/establish a connection to the database
+    connection = pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
+
+    #Create a cursor
+    cursor = connection.cursor(pymysql.cursors.DictCursor)
+
+    #Sructure the SQL query that will check whether the email and the password entered are correct
+    sql = "SELECT * FROM users WHERE email = %s AND password = %s"
+
+    #Put the data received from the form into a tuple
+    data = (email, password)
+
+    #By use of the cursor execute the sql
+    cursor.execute(sql, data)
+
+    #Check whether there are rows and store the same on a variable
+    count = cursor.rowcount
+
+    #If there are records returned it means the password and the email are correct otherwise it means they are wrong
+    if count == 0:
+        return jsonify({"message":"Login Failed"})
+    else:
+        #There must be a user so we create a variable that will hold all the details fetched from the database
+        user=cursor.fetchone()
+        #Return the details to the frontend as well as a message
+        return jsonify({"message":"user Logged in Successfully",  "user":user})
 
 
-
-
-
+    return jsonify({"message" : "signin Route Accessed"})
 
 #Run the application
 app.run(debug=True)
