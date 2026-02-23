@@ -41,7 +41,7 @@ def signup():
 
         #Structure an sql to insert the details received from the form
         #The %s is a place holder -> It stands in plac of actual values
-        sql = "INSERT INTO users(username, email, password, phone) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO product_details(username, email, password, phone) VALUES (%s, %s, %s, %s)"
 
         #Create a tuple that will hold all the data gotten from the form
         data = (username, email, password, phone)
@@ -112,6 +112,7 @@ def Addproducts():
 
         #Extract the file name of the product photo to the vrible filename
         filename = product_photo.filename
+
         #By use of the os module we can extract the file path where the image is currently saved
         photo_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
@@ -140,13 +141,28 @@ def Addproducts():
 
 
 
-        return jsonify({"message": "Product added successfully"})   
+        return jsonify({"message": "Product added successfully"}) 
 
 
 
+#Below is the route for fetching products
+@app.route("/api/get_products")
+def get_products():
+    #Create a connection to the database
+    connection=pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
+    #Create a cursor
+    cursor=connection.cursor(pymysql.cursors.DictCursor)
 
+    #Structure the query to fetch all the products from the table product_details
+    sql = "SELECT * FROM product_details"
 
+    #Execute the query
+    cursor.execute(sql)   
+    #Create a variable that holds the data fetched from the table
+    products = cursor.fetchall()        
 
+    
+    return jsonify(products) 
 
 #Run the application
 app.run(debug=True)
