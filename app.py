@@ -12,9 +12,13 @@ from flask import *
 import os
 #Import the pymysql module -> it helps us to create a connection between python flask and mysql database
 import pymysql 
+from flask_cors import CORS
+
+#CORS => cross origin resource sharing
 
 #Create a fask application and give it a name
 app = Flask(__name__)
+CORS(app)
 
 #Configure the location to where your product images will be saved on your application 
 app.config["UPLOAD_FOLDER"] = "static/images"
@@ -33,7 +37,7 @@ def signup():
         #by use of the print function lets print all these details with the upcoming request
         #print(username, email, password, phone)
         #Establish a connection between flask/python and my sql
-        connection = pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
+        connection = pymysql.connect(host="mysql-sethstanley.alwaysdata.net", user="sethstanley", password="modcom1234", database="sethstanley_sokogarden")
 
         #Create a cursor to execute the sql queries
         #Cursor -> An object used to execute SQL queries
@@ -41,7 +45,7 @@ def signup():
 
         #Structure an sql to insert the details received from the form
         #The %s is a place holder -> It stands in plac of actual values
-        sql = "INSERT INTO product_details(username, email, password, phone) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO users(username, email, password, phone) VALUES (%s, %s, %s, %s)"
 
         #Create a tuple that will hold all the data gotten from the form
         data = (username, email, password, phone)
@@ -69,7 +73,7 @@ def signin():
      #print the two details entered on the form
      #print(email, password)
      #Create/establish a connection to the database
-    connection = pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
+    connection = pymysql.connect(host="mysql-sethstanley.alwaysdata.net", user="sethstanley", password="modcom1234", database="sethstanley_sokogarden")
 
     #Create a cursor
     cursor = connection.cursor(pymysql.cursors.DictCursor)
@@ -122,7 +126,7 @@ def Addproducts():
         #Print them out to test whether you are receiving the details sent with the request.
         #print(product_name, product_description, product_cost, product_photo) 
         #Establish a connection to other db
-        connection = pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
+        connection = pymysql.connect(host="mysql-sethstanley.alwaysdata.net", user="sethstanley", password="modcom1234", database="sethstanley_sokogarden")
 
         #Create a cursor
         cursor = connection.cursor()
@@ -149,15 +153,15 @@ def Addproducts():
 @app.route("/api/get_products")
 def get_products():
     #Create a connection to the database
-    connection=pymysql.connect(host="localhost", user="root", password="", database="sokogardenonline")
+    connection=pymysql.connect(host="mysql-sethstanley.alwaysdata.net", user="sethstanley", password="modcom1234", database="sethstanley_sokogarden")
     #Create a cursor
     cursor=connection.cursor(pymysql.cursors.DictCursor)
 
     #Structure the query to fetch all the products from the table product_details
-    sql = "SELECT * FROM product_details"
+    sql = "Select * FROM product_details"
 
     #Execute the query
-    cursor.execute(sql)   
+    cursor.execute(sql)  
     #Create a variable that holds the data fetched from the table
     products = cursor.fetchall()        
 
@@ -223,4 +227,4 @@ def mpesa_payment():
         return jsonify({"message": "Please Complete Payment in Your Phone and we will deliver in minutes"}) 
 
 #Run the application
-app.run(debug=True)
+#app.run(debug=True)
